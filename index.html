@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字实验室 | 技术与创作的交界处</title>
+    <style>
+        /* --- 基础样式变量 --- */
+        :root {
+            --tech-bg: #0a0a0c;
+            --tech-accent: #00f2ff;
+            --tech-secondary: #7000ff;
+            --tech-text: #e0e0e0;
+            --lit-bg: #f5f2e9;
+            --lit-accent: #4a3728;
+            --lit-text: #2c2c2c;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+            overflow-x: hidden;
+            background: var(--tech-bg);
+            color: var(--tech-text);
+            line-height: 1.6;
+        }
+
+        /* --- 背景 Canvas 粒子 --- */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0c 100%);
+        }
+
+        /* --- 布局容器 --- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        /* --- Hero 模块 --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--tech-accent), var(--tech-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            opacity: 0.8;
+            color: #aaa;
+        }
+
+        .hero .declaration {
+            margin-top: 2rem;
+            font-style: italic;
+            border-left: 2px solid var(--tech-accent);
+            padding-left: 15px;
+        }
+
+        /* --- Projects 模块 (科技感) --- */
+        .projects-section {
+            background: rgba(10, 10, 12, 0.7);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .tech-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 60%;
+            height: 4px;
+            background: var(--tech-accent);
+            box-shadow: 0 0 10px var(--tech-accent);
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(0, 242, 255, 0.05));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--tech-accent);
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-tags {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--tech-accent);
+            border-radius: 4px;
+            color: var(--tech-accent);
+        }
+
+        /* --- Writing 模块 (感性创作 - 纸张感) --- */
+        .writing-section {
+            background: var(--lit-bg);
+            color: var(--lit-text);
+            font-family: "Georgia", "Source Han Serif", serif;
+            box-shadow: 0 -50px 100px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        .lit-title {
+            color: var(--lit-accent);
+        }
+
+        .lit-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--lit-accent);
+        }
+
+        .writing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .writing-item {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .writing-item:hover {
+            transform: translateX(10px);
+        }
+
+        .writing-item h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .writing-item p {
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* --- Gallery 模块 --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: #222;
+            overflow: hidden;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        /* --- Interaction & Contact --- */
+        .interaction-box {
+            border: 2px dashed rgba(255,255,255,0.2);
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px;
+            margin-top: 50px;
+        }
+
+        footer {
+            padding: 50px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- 响应式 --- */
+        @media (max-width: 768px) {
+            .writing-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5rem; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Hero Section -->
+    <section class="hero container">
+        <h1>[ 李某某 ]</h1>
+        <p>智能科学与技术专业 · 数字造物主 · 文学漫游者</p>
+        <div class="declaration">
+            “在代码的逻辑森林里，捕捉感性的诗意瞬间。”
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="container" id="projects">
+        <h2 class="section-title tech-title">实验室 / PROJECTS</h2>
+        <div class="project-grid">
+            <a href="https://github.com/username/neural-viz" class="project-card">
+                <h3>Neural-Flow 可视化引擎</h3>
+                <p>基于深度学习权重的实时动态可视化系统，探索神经网络内部的拓扑结构美学。</p>
+                <div class="project-tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">PyTorch</span>
+                    <span class="tag">Three.js</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/username/ai-poetry" class="project-card">
+                <h3>隐喻生成器</h3>
+                <p>利用微调后的 Transformer 模型，将技术术语转化为意识流诗歌的创作实验。</p>
+                <div class="project-tags">
+                    <span class="tag">NLP</span>
+                    <span class="tag">LLM</span>
+                    <span class="tag">FastAPI</span>
+                </div>
+            </a>
+
+            <a href="https://github.com/username/vision-lab" class="project-card">
+                <h3>边缘计算视觉系统</h3>
+                <p>部署于嵌入式设备的实时目标检测方案，应用于无人机自动化巡检场景。</p>
+                <div class="project-tags">
+                    <span class="tag">OpenCV</span>
+                    <span class="tag">C++</span>
+                    <span class="tag">Edge AI</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Writing Section -->
+    <section class="writing-section">
+        <div class="container">
+            <h2 class="section-title lit-title">文稿 / WRITINGS</h2>
+            <div class="writing-grid">
+                <div class="writing-item">
+                    <h3>《硅基生命的呼吸感》</h3>
+                    <p>当我们在讨论通用人工智能时，我们是否在无意中寻找一种能够回应孤独的共鸣？本文探讨了算法中潜藏的人文属性...</p>
+                </div>
+                <div class="writing-item">
+                    <h3>《消失在代码行间的下午》</h3>
+                    <p>午后的阳光穿过百叶窗，在键盘上投下条纹。那是我第一次感觉到，调试 Bug 就像是在修复一段破碎的记忆...</p>
+                </div>
+                <div class="writing-item">
+                    <h3>《从零开始的数字考古》</h3>
+                    <p>旧硬盘里的每一个过时文件，都是一段技术文明的遗骸。我们该如何保存这些脆弱的二进制情感？</p>
+                </div>
+                <div class="writing-item">
+                    <h3>《赛博格的诗学》</h3>
+                    <p>当人类的义肢与芯片开始思考，诗意是否还能在纯粹的生物电流中产生？这是一次关于边界的探讨...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="container">
+        <h2 class="section-title tech-title">视角 / GALLERY</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="https://picsum.photos/seed/tech1/800/800" alt="Work"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/seed/nature2/800/800" alt="Nature"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/seed/code3/800/800" alt="Code"></div>
+        </div>
+    </section>
+
+    <!-- Interaction Section -->
+    <section class="container">
+        <div class="interaction-box">
+            <h3>[ 交互接口正在初始化 ]</h3>
+            <p style="margin-top: 15px; opacity: 0.7;">
+                未来，这里将接入实时评论系统与数据可视化访客图谱。<br>
+                这是一个可持续生长的数字空间。
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact & Footer -->
+    <section class="container" style="text-align: center;">
+        <h2 class="section-title">建立连接 / CONTACT</h2>
+        <p>Email: <a href="mailto:hello@example.com" style="color: var(--tech-accent);">yourname@university.edu.cn</a></p>
+        <p style="margin-top: 10px;">GitHub: <a href="#" style="color: var(--tech-accent);">@username</a></p>
+    </section>
+
+    <footer>
+        &copy; 2024 Created by Digital Alchemist. Powered by Vanilla JS & Curiosity.
+    </footer>
+
+    <script>
+        /**
+         * 粒子系统交互实现
+         */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        // 自动适应屏幕
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // 监听鼠标
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        // 粒子类
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 5;
+                this.color = Math.random() > 0.5 ? '#00f2ff' : '#7000ff';
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 0.5,
+                    y: (Math.random() - 0.5) * 0.5
+                };
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            update() {
+                // 基础漂浮运动
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+
+                // 边界检测
+                if (this.x < 0 || this.x > canvas.width) this.velocity.x *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.velocity.y *= -1;
+
+                // 鼠标交互：吸附与跟随效果
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < mouse.radius) {
+                    const force = (mouse.radius - distance) / mouse.radius;
+                    const directionX = dx / distance;
+                    const directionY = dy / distance;
+                    
+                    // 向鼠标方向缓慢聚集
+                    this.x += directionX * force * 2;
+                    this.y += directionY * force * 2;
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            let numberOfParticles = (canvas.width * canvas.height) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制粒子
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+                particles[i].update();
+                
+                // 连线逻辑：增强视觉吸引力
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(112, 0, 255, ${1 - distance/100})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        initParticles();
+        animate();
+
+        // 简单的平滑滚动效果
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
