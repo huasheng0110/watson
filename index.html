@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字实验室 | 技术与创作的交界处</title>
+    <title>数字实验室 | 裴佳慧的个人空间</title>
     <style>
         /* --- 基础样式变量 --- */
         :root {
@@ -31,30 +31,45 @@
             line-height: 1.6;
         }
 
+        /* --- 左上角个人信息悬浮区 --- */
+        .top-profile {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 12, 0.4);
+            padding: 8px 15px 8px 8px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .avatar-container {
+            width: 50px; height: 50px;
+            border-radius: 50%; overflow: hidden;
+            border: 2px solid var(--tech-accent);
+            box-shadow: 0 0 10px var(--tech-accent);
+            margin-right: 12px; background: #1a1a2e;
+        }
+
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-text { display: flex; flex-direction: column; }
+        .profile-name { font-weight: 800; font-size: 1rem; color: #fff; }
+        .profile-title { font-size: 0.7rem; color: var(--tech-accent); text-transform: uppercase; }
+
         /* --- 背景 Canvas 粒子 --- */
         #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0c 100%);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a0c 100%);
         }
 
-        /* --- 布局容器 --- */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+        section { padding: 100px 0; position: relative; }
 
-        section {
-            padding: 100px 0;
-            position: relative;
-        }
-
-        /* --- Hero 模块 --- */
+        /* --- Hero 模块 (核心修改区) --- */
         .hero {
             height: 100vh;
             display: flex;
@@ -64,14 +79,37 @@
             text-align: center;
         }
 
-        .hero h1 {
-            font-size: 3.5rem;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--tech-accent), var(--tech-secondary));
+        .art-name {
+            font-size: 5.5rem; /* 增大字号 */
+            /* 艺术字体堆栈：楷体、行楷风格 */
+            font-family: "STKaiti", "Kaiti SC", "KaiTi", "BiauKai", serif; 
+            font-weight: 500;
+            margin-bottom: 2.5rem;
+            position: relative;
+            background: linear-gradient(135deg, #fff 30%, var(--tech-accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            letter-spacing: 0.5rem;
+            padding: 0 20px;
+        }
+
+        /* 艺术下划线 */
+        .art-name::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px; /* 初始宽度 */
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--tech-accent), var(--tech-secondary), transparent);
+            box-shadow: 0 5px 15px rgba(0, 242, 255, 0.4);
+            animation: lineExpand 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes lineExpand {
+            from { width: 80px; opacity: 0.6; }
+            to { width: 200px; opacity: 1; }
         }
 
         .hero p {
@@ -79,6 +117,8 @@
             max-width: 600px;
             opacity: 0.8;
             color: #aaa;
+            letter-spacing: 2px;
+            font-family: "Inter", sans-serif;
         }
 
         .hero .declaration {
@@ -86,263 +126,98 @@
             font-style: italic;
             border-left: 2px solid var(--tech-accent);
             padding-left: 15px;
+            color: #888;
         }
 
-        /* --- Projects 模块 (科技感) --- */
-        .projects-section {
-            background: rgba(10, 10, 12, 0.7);
-        }
+        /* --- 其他通用样式 --- */
+        .section-title { font-size: 2.5rem; margin-bottom: 3rem; position: relative; display: inline-block; }
+        .tech-title::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 60%; height: 4px; background: var(--tech-accent); box-shadow: 0 0 10px var(--tech-accent); }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .project-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2rem; border-radius: 12px; transition: var(--transition); text-decoration: none; display: block; color: inherit; }
+        .project-card:hover { transform: translateY(-10px); border-color: var(--tech-accent); box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15); }
+        .tag { font-size: 0.75rem; padding: 4px 10px; background: rgba(0, 242, 255, 0.1); border: 1px solid var(--tech-accent); border-radius: 4px; color: var(--tech-accent); margin-right: 5px; margin-top: 5px; display: inline-block; }
 
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            position: relative;
-            display: inline-block;
-        }
+        /* --- Writing 模块 (纸张感) --- */
+        .writing-section { background: var(--lit-bg); color: var(--lit-text); font-family: "Georgia", "Source Han Serif", serif; box-shadow: 0 -50px 100px rgba(0,0,0,0.5); position: relative; z-index: 10; }
+        .lit-title { color: var(--lit-accent); }
+        .lit-title::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 40px; height: 2px; background: var(--lit-accent); }
+        .writing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .writing-item { border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 2rem; transition: var(--transition); }
+        .writing-item:hover { transform: translateX(10px); }
 
-        .tech-title::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 60%;
-            height: 4px;
-            background: var(--tech-accent);
-            box-shadow: 0 0 10px var(--tech-accent);
-        }
+        /* --- Gallery --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .gallery-item { aspect-ratio: 1; background: #222; overflow: hidden; border-radius: 8px; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: var(--transition); }
+        .gallery-item:hover img { filter: grayscale(0%); transform: scale(1.1); }
 
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
+        footer { padding: 50px 0; text-align: center; font-size: 0.9rem; opacity: 0.6; }
 
-        .project-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2rem;
-            border-radius: 12px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            color: inherit;
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(0, 242, 255, 0.05));
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--tech-accent);
-            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15);
-        }
-
-        .project-card:hover::before {
-            opacity: 1;
-        }
-
-        .project-tags {
-            margin-top: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .tag {
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            background: rgba(0, 242, 255, 0.1);
-            border: 1px solid var(--tech-accent);
-            border-radius: 4px;
-            color: var(--tech-accent);
-        }
-
-        /* --- Writing 模块 (感性创作 - 纸张感) --- */
-        .writing-section {
-            background: var(--lit-bg);
-            color: var(--lit-text);
-            font-family: "Georgia", "Source Han Serif", serif;
-            box-shadow: 0 -50px 100px rgba(0,0,0,0.5);
-            position: relative;
-            z-index: 10;
-        }
-
-        .lit-title {
-            color: var(--lit-accent);
-        }
-
-        .lit-title::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background: var(--lit-accent);
-        }
-
-        .writing-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-        }
-
-        .writing-item {
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding-bottom: 2rem;
-            transition: var(--transition);
-        }
-
-        .writing-item:hover {
-            transform: translateX(10px);
-        }
-
-        .writing-item h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        .writing-item p {
-            color: #666;
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
-
-        /* --- Gallery 模块 --- */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .gallery-item {
-            aspect-ratio: 1;
-            background: #222;
-            overflow: hidden;
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%);
-            transition: var(--transition);
-        }
-
-        .gallery-item:hover img {
-            filter: grayscale(0%);
-            transform: scale(1.1);
-        }
-
-        /* --- Interaction & Contact --- */
-        .interaction-box {
-            border: 2px dashed rgba(255,255,255,0.2);
-            padding: 40px;
-            text-align: center;
-            border-radius: 20px;
-            margin-top: 50px;
-        }
-
-        footer {
-            padding: 50px 0;
-            text-align: center;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        /* --- 响应式 --- */
         @media (max-width: 768px) {
+            .art-name { font-size: 3.5rem; letter-spacing: 0.2rem; }
             .writing-grid { grid-template-columns: 1fr; }
-            .hero h1 { font-size: 2.5rem; }
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 
+    <!-- 左上角个人信息悬浮区 -->
+    <div class="top-profile">
+        <div class="avatar-container">
+            <img src="https://picsum.photos/id/64/200/200" alt="Avatar">
+        </div>
+        <div class="profile-text">
+            <span class="profile-name">裴佳慧</span>
+            <span class="profile-title">Intelligent Science</span>
+        </div>
+    </div>
+
     <canvas id="particle-canvas"></canvas>
 
     <!-- Hero Section -->
     <section class="hero container">
-        <h1>[ 裴佳慧 ]</h1>
+        <!-- 修改区：艺术化姓名展示 -->
+        <h1 class="art-name">Jiahui Pei</h1>
+        
         <p>智能科学与技术专业 · 数字造物主 · 文学漫游者</p>
         <div class="declaration">
             “在代码的逻辑森林里，捕捉感性的诗意瞬间。”
         </div>
     </section>
 
-<!-- Projects Section -->
-<section class="container" id="projects">
-    <h2 class="section-title tech-title">实验室 / PROJECTS</h2>
-    <div class="project-grid">
-
-        <!-- Project 1: Gait Recognition -->
-        <a href="https://github.com/username/gait-recognition" class="project-card" target="_blank">
-            <h3>基于空时域特征融合的步态识别算法研究</h3>
-            <p>
-                面向复杂行走场景的步态识别研究，设计双分支网络结构，
-                引入差分注意力机制联合建模静态空间结构与时序运动特征，
-                并通过渐进式特征融合提升模型泛化能力。
-            </p>
-            <div class="project-tags">
-                <span class="tag">PyTorch</span>
-                <span class="tag">OpenGait</span>
-                <span class="tag">Gait Recognition</span>
-                <span class="tag">Attention</span>
-                <span class="tag">CASIA-B</span>
-            </div>
-        </a>
-
-        <!-- Project 2: Gesture Authentication -->
-        <a href="https://github.com/username/gesture-authentication" class="project-card" target="_blank">
-            <h3>基于视频分析的手势认证实验</h3>
-            <p>
-                构建完整的手势认证流程，结合手部区域分割与纹理特征提取，
-                并利用 DTW 距离建模手势行为的时序特征，
-                探索传统方法与深度学习模型在复杂场景下的性能差异。
-            </p>
-            <div class="project-tags">
-                <span class="tag">Computer Vision</span>
-                <span class="tag">LBP</span>
-                <span class="tag">DTW</span>
-                <span class="tag">YOLO</span>
-                <span class="tag">SAM</span>
-            </div>
-        </a>
-
-        <!-- Project 3: ALCAPA Diagnosis -->
-        <a href="https://github.com/username/alcapa-diagnosis" class="project-card" target="_blank">
-            <h3>基于超声心动图的 ALCAPA 智能辅助诊断系统</h3>
-            <p>
-                基于真实临床超声心动图数据构建罕见病鉴别数据集，
-                以 ResNet50 为骨干网络进行特征学习与分类建模，
-                验证深度学习方法在罕见心脏病辅助诊断中的可行性。
-            </p>
-            <div class="project-tags">
-                <span class="tag">Medical Imaging</span>
-                <span class="tag">Echocardiography</span>
-                <span class="tag">ResNet</span>
-                <span class="tag">Rare Disease</span>
-                <span class="tag">Deep Learning</span>
-            </div>
-        </a>
-
-    </div>
-</section>
-
+    <!-- Projects Section -->
+    <section class="container" id="projects">
+        <h2 class="section-title tech-title">实验室 / PROJECTS</h2>
+        <div class="project-grid">
+            <a href="#" class="project-card">
+                <h3>基于空时域特征融合的步态识别算法</h3>
+                <p>设计双分支网络结构，引入差分注意力机制联合建模静态空间结构与时序运动特征。</p>
+                <div class="project-tags">
+                    <span class="tag">PyTorch</span>
+                    <span class="tag">Gait Recognition</span>
+                    <span class="tag">Attention</span>
+                </div>
+            </a>
+            <a href="#" class="project-card">
+                <h3>基于视频分析的手势认证实验</h3>
+                <p>利用 DTW 距离建模手势行为的时序特征，探索传统方法与深度学习模型的性能差异。</p>
+                <div class="project-tags">
+                    <span class="tag">Computer Vision</span>
+                    <span class="tag">YOLO</span>
+                    <span class="tag">DTW</span>
+                </div>
+            </a>
+            <a href="#" class="project-card">
+                <h3>ALCAPA 智能辅助诊断系统</h3>
+                <p>基于临床超声心动图数据构建罕见病鉴别数据集，验证深度学习辅助诊断的可行性。</p>
+                <div class="project-tags">
+                    <span class="tag">Medical Imaging</span>
+                    <span class="tag">ResNet</span>
+                    <span class="tag">Deep Learning</span>
+                </div>
+            </a>
+        </div>
+    </section>
 
     <!-- Writing Section -->
     <section class="writing-section">
@@ -351,19 +226,19 @@
             <div class="writing-grid">
                 <div class="writing-item">
                     <h3>《硅基生命的呼吸感》</h3>
-                    <p>当我们在讨论通用人工智能时，我们是否在无意中寻找一种能够回应孤独的共鸣？本文探讨了算法中潜藏的人文属性...</p>
+                    <p>当我们在讨论通用人工智能时，我们是否在无意中寻找一种能够回应孤独的共鸣？</p>
                 </div>
                 <div class="writing-item">
                     <h3>《消失在代码行间的下午》</h3>
-                    <p>午后的阳光穿过百叶窗，在键盘上投下条纹。那是我第一次感觉到，调试 Bug 就像是在修复一段破碎的记忆...</p>
+                    <p>午后的阳光穿过百叶窗，在键盘上投下条纹。调试 Bug 就像是在修复一段破碎的记忆...</p>
                 </div>
                 <div class="writing-item">
                     <h3>《从零开始的数字考古》</h3>
-                    <p>旧硬盘里的每一个过时文件，都是一段技术文明的遗骸。我们该如何保存这些脆弱的二进制情感？</p>
+                    <p>旧硬盘里的每一个过时文件，都是一段技术文明的遗骸。</p>
                 </div>
                 <div class="writing-item">
                     <h3>《赛博格的诗学》</h3>
-                    <p>当人类的义肢与芯片开始思考，诗意是否还能在纯粹的生物电流中产生？这是一次关于边界的探讨...</p>
+                    <p>当人类的义肢与芯片开始思考，诗意是否还能在纯粹的生物电流中产生？</p>
                 </div>
             </div>
         </div>
@@ -379,39 +254,20 @@
         </div>
     </section>
 
-    <!-- Interaction Section -->
-    <section class="container">
-        <div class="interaction-box">
-            <h3>[ 交互接口正在初始化 ]</h3>
-            <p style="margin-top: 15px; opacity: 0.7;">
-                未来，这里将接入实时评论系统与数据可视化访客图谱。<br>
-                这是一个可持续生长的数字空间。
-            </p>
+    <footer class="container">
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px;">
+            <p>Email: peijiahui@example.edu.cn</p>
+            <p style="margin-top: 10px;">&copy; 2026 Created by Jiahui Pei. Powered by Vanilla JS.</p>
         </div>
-    </section>
-
-    <!-- Contact & Footer -->
-    <section class="container" style="text-align: center;">
-        <h2 class="section-title">建立连接 / CONTACT</h2>
-        <p>Email: <a href="mailto:hello@example.com" style="color: var(--tech-accent);">yourname@university.edu.cn</a></p>
-        <p style="margin-top: 10px;">GitHub: <a href="#" style="color: var(--tech-accent);">@username</a></p>
-    </section>
-
-    <footer>
-        &copy; 2026 Created by Watson. Powered by Vanilla JS & Curiosity.
     </footer>
 
     <script>
-        /**
-         * 粒子系统交互实现
-         */
+        // 粒子背景逻辑
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
-
         let particles = [];
         const mouse = { x: null, y: null, radius: 150 };
 
-        // 自动适应屏幕
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -420,110 +276,60 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // 监听鼠标
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.x;
             mouse.y = e.y;
         });
 
-        // 粒子类
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2 + 1;
-                this.baseX = this.x;
-                this.baseY = this.y;
-                this.density = (Math.random() * 30) + 5;
                 this.color = Math.random() > 0.5 ? '#00f2ff' : '#7000ff';
-                this.velocity = {
-                    x: (Math.random() - 0.5) * 0.5,
-                    y: (Math.random() - 0.5) * 0.5
-                };
+                this.velocity = { x: (Math.random() - 0.5) * 0.5, y: (Math.random() - 0.5) * 0.5 };
             }
-
             draw() {
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.closePath();
                 ctx.fill();
             }
-
             update() {
-                // 基础漂浮运动
                 this.x += this.velocity.x;
                 this.y += this.velocity.y;
-
-                // 边界检测
                 if (this.x < 0 || this.x > canvas.width) this.velocity.x *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.velocity.y *= -1;
 
-                // 鼠标交互：吸附与跟随效果
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
-                
                 if (distance < mouse.radius) {
                     const force = (mouse.radius - distance) / mouse.radius;
-                    const directionX = dx / distance;
-                    const directionY = dy / distance;
-                    
-                    // 向鼠标方向缓慢聚集
-                    this.x += directionX * force * 2;
-                    this.y += directionY * force * 2;
+                    this.x += (dx / distance) * force * 2;
+                    this.y += (dy / distance) * force * 2;
                 }
             }
         }
 
-        function initParticles() {
+        function init() {
             particles = [];
-            let numberOfParticles = (canvas.width * canvas.height) / 9000;
-            for (let i = 0; i < numberOfParticles; i++) {
+            for (let i = 0; i < (canvas.width * canvas.height) / 9000; i++) {
                 particles.push(new Particle());
             }
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 绘制粒子
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].draw();
-                particles[i].update();
-                
-                // 连线逻辑：增强视觉吸引力
-                for (let j = i; j < particles.length; j++) {
-                    let dx = particles[i].x - particles[j].x;
-                    let dy = particles[i].y - particles[j].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 100) {
-                        ctx.strokeStyle = `rgba(112, 0, 255, ${1 - distance/100})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                        ctx.closePath();
-                    }
-                }
-            }
+            particles.forEach(p => {
+                p.draw();
+                p.update();
+            });
             requestAnimationFrame(animate);
         }
 
-        initParticles();
+        init();
         animate();
-
-        // 简单的平滑滚动效果
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
     </script>
 </body>
 </html>
